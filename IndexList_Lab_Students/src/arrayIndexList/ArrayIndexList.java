@@ -1,11 +1,13 @@
 package arrayIndexList;
 
+import java.util.Arrays;
+
 import indexList.IndexList;
 
 public class ArrayIndexList<E> implements IndexList<E> {
-	private static final int INITCAP = 5; 
-	private static final int CAPTOAR = 5; 
-	private static final int MAXEMPTYPOS = 10; 
+	private static final int INITCAP = 1; 
+	private static final int CAPTOAR = 1; 
+	private static final int MAXEMPTYPOS = 2; 
 	private E[] element; 
 	private int size; 
 
@@ -17,7 +19,16 @@ public class ArrayIndexList<E> implements IndexList<E> {
 
 	public void add(int index, E e) throws IndexOutOfBoundsException {
 		// ADD CODE AS REQUESTED BY EXERCISES
-		size++;
+		if( index < 0 || index > size) {
+			throw new IndexOutOfBoundsException("The given index is not valid");
+		}
+		if(element.length == size) {
+			changeCapacity(CAPTOAR);
+			
+			}
+		moveDataOnePositionTR(index,size-1 );
+			element[index]=e;
+			size++;
 		
 		 
 	}
@@ -25,15 +36,18 @@ public class ArrayIndexList<E> implements IndexList<E> {
 
 	public void add(E e) {
 		// ADD CODE AS REQUESTED BY EXERCISES
-		if(size == element.length){changeCapacity(size*2);}
-		element[size] = e;
+	if(size == element.length){changeCapacity(1);}
+	element[size] = e;
 		size++;
 	}
 
 
 	public E get(int index) throws IndexOutOfBoundsException {
 		// ADD AND MODIGY CODE AS REQUESTED BY EXERCISES
-		return null; 
+		if( index < 0 || index > size) {
+			throw new IndexOutOfBoundsException("The given index is not valid");
+		}
+		return element[index]; 
 	}
 
 
@@ -44,13 +58,28 @@ public class ArrayIndexList<E> implements IndexList<E> {
 
 	public E remove(int index) throws IndexOutOfBoundsException {
 		// ADD AND MODIFY CODE AS REQUESTED BY EXERCISES
-		return null;
+		if( index < 0 || index >= size) {
+			throw new IndexOutOfBoundsException("The given index is not valid");
+		}
+			if(element.length-size == MAXEMPTYPOS) {
+				changeCapacity(-CAPTOAR);
+				
+			}
+			moveDataOnePositionTL(index+1, size-1);
+			size--;
+			element[size]=null;
+		return element[index];
 	}
 
 
 	public E set(int index, E e) throws IndexOutOfBoundsException {
 		// ADD AND MODIFY CODE AS REQUESTED BY EXERCISES
-		return null;
+		if( index < 0 || index >= size) {
+			throw new IndexOutOfBoundsException("The given index is not valid");
+		}
+		element[index]= e;
+		E newValue= element[index];
+		return newValue;
 	}
 
 
@@ -91,19 +120,30 @@ public class ArrayIndexList<E> implements IndexList<E> {
 		for (int pos = low; pos <= sup; pos++)
 			element[pos-1] = element[pos]; 
 	}
-
+	@Override
+	public int capacity() {
+		
+		return element.length;
+	}
 
 	// The following two methods are to be implemented as part of an exercise
 	public Object[] toArray() {
 		// TODO es in Exercise 3
-		return null;
+		return Arrays.copyOf(element, size);
 	}
 
 
 	@Override
 	public <T1> T1[] toArray(T1[] array) {
 		// TODO as in Exercise 3
-		return null;
-	}
-
+		if (array.length < size)
+		    return (T1[]) Arrays.copyOf(element, size, array.getClass());
+			System.arraycopy(element, 0, array, 0, size);
+			if (array.length > size)
+				for(int i=size;i<array.length;i++) {
+					array[i]= null;
+				}
+			return array;
+		}
+	
 }
